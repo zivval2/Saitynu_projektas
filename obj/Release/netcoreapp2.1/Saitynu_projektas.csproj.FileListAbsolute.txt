@@ -1,0 +1,14 @@
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\bin\Release\netcoreapp2.1\Saitynu_projektas.deps.json
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\bin\Release\netcoreapp2.1\Saitynu_projektas.runtimeconfig.json
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\bin\Release\netcoreapp2.1\Saitynu_projektas.runtimeconfig.dev.json
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\bin\Release\netcoreapp2.1\Saitynu_projektas.dll
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\bin\Release\netcoreapp2.1\Saitynu_projektas.pdb
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\obj\Release\netcoreapp2.1\Saitynu_projektas.csprojAssemblyReference.cache
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\obj\Release\netcoreapp2.1\Saitynu_projektas.csproj.CoreCompileInputs.cache
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\obj\Release\netcoreapp2.1\Saitynu_projektas.RazorAssemblyInfo.cache
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\obj\Release\netcoreapp2.1\Saitynu_projektas.RazorAssemblyInfo.cs
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\obj\Release\netcoreapp2.1\Saitynu_projektas.AssemblyInfoInputs.cache
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\obj\Release\netcoreapp2.1\Saitynu_projektas.AssemblyInfo.cs
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\obj\Release\netcoreapp2.1\Saitynu_projektas.RazorTargetAssemblyInfo.cache
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\obj\Release\netcoreapp2.1\Saitynu_projektas.dll
+C:\Users\zv222\Desktop\Saitynai\Saitynu_projektas\Saitynu_projektas\obj\Release\netcoreapp2.1\Saitynu_projektas.pdb
