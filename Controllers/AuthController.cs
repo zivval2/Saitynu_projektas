@@ -42,6 +42,8 @@ namespace Saitynu_projektas.Controllers
             //var x = user.Select(l => l.UserId).FirstOrDefault();
             // var artist2 = _context.Users.Where(l => l.Password == password);
            string role = _context.Users.Where(l => l.Username == user.Username).Where(l => l.Password == user.Password).Select(l => l.Role).FirstOrDefault();
+
+            string id = _context.Users.Where(l => l.Username == user.Username).Where(l => l.Password == user.Password).Select(l => l.UserId).FirstOrDefault().ToString();
             if (user1 == 0)// || artist2==null || artist != artist2)
             {
                 return NotFound();
@@ -50,13 +52,13 @@ namespace Saitynu_projektas.Controllers
             // string role = user.(role => l.Role).ToString();
 
 
-            return Ok(new JwtSecurityTokenHandler().WriteToken(GenerateToken(user.Username, role)));//"Admin")));
+            return Ok(new JwtSecurityTokenHandler().WriteToken(GenerateToken(user.Username, role, id)));//"Admin")));
 
            // return Ok(new JwtSecurityTokenHandler().WriteToken(GenerateToken(username, "Admin")));
             //return Ok(new ObjectResult(GenerateToken(username, "Admin")));
         }
 
-        private JwtSecurityToken GenerateToken(string username, string role)
+        private JwtSecurityToken GenerateToken(string username, string role, string id)
         {
             Environment.SetEnvironmentVariable("KEY_FOR_SECRET", "kazkas123213das_ASdasdadasdasdsada");
 
@@ -68,6 +70,7 @@ namespace Saitynu_projektas.Controllers
            // var claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.Role, role));
             claims.Add(new Claim(ClaimTypes.Name, username));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, id));
             //claims.Add(new Claim(ClaimTypes.Role, "Lecturer"));
             //claims.Add(new Claim(ClaimTypes.NameIdentifier, id.ToString()));
 

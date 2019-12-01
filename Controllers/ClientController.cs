@@ -15,111 +15,111 @@ namespace Saitynu_projektas.Controllers
     {
         private readonly ClientContext _context;
 
-        public ClientController(ClientContext context)
-        {
-            _context = context;
-        }
+        //public ClientController(ClientContext context)
+        //{
+        //    _context = context;
+        //}
 
-        // GET: api/Client
-        [HttpGet]
-        public IEnumerable<Client> GetClients()
-        {
-            return _context.Clients;
-        }
+        //// GET: api/Client
+        //[HttpGet]
+        //public IEnumerable<Client> GetClients()
+        //{
+        //    return _context.Clients;
+        //}
 
-        // GET: api/Client/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetClient([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// GET: api/Client/5
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetClient([FromRoute] int id)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            var client = await _context.Clients.FindAsync(id);
+        //    var client = await _context.Clients.FindAsync(id);
 
-            if (client == null)
-            {
-                return NotFound();
-            }
+        //    if (client == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return Ok(client);
-        }
+        //    return Ok(client);
+        //}
 
-        // PUT: api/Client/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutClient([FromRoute] int id, [FromBody] Client client)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// PUT: api/Client/5
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutClient([FromRoute] int id, [FromBody] Client client)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            if (id != client.ClientId)
-            {
-                return BadRequest();
-            }
+        //    if (id != client.ClientId)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(client).State = EntityState.Modified;
+        //    _context.Entry(client).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClientExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!ClientExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        // POST: api/Client
-        [HttpPost]
-        public async Task<IActionResult> PostClient([FromBody] Client client)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// POST: api/Client
+        //[HttpPost]
+        //public async Task<IActionResult> PostClient([FromBody] Client client)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            _context.Clients.Add(client);
-            await _context.SaveChangesAsync();
+        //    _context.Clients.Add(client);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetClient", new { id = client.ClientId }, client);
-        }
+        //    return CreatedAtAction("GetClient", new { id = client.ClientId }, client);
+        //}
 
-        // DELETE: api/Client/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteClient([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// DELETE: api/Client/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteClient([FromRoute] int id)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            var client = await _context.Clients.FindAsync(id);
-            if (client == null)
-            {
-                return NotFound();
-            }
+        //    var client = await _context.Clients.FindAsync(id);
+        //    if (client == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Clients.Remove(client);
-            await _context.SaveChangesAsync();
+        //    _context.Clients.Remove(client);
+        //    await _context.SaveChangesAsync();
 
-            return Ok(client);
-        }
+        //    return Ok(client);
+        //}
 
-        private bool ClientExists(int id)
-        {
-            return _context.Clients.Any(e => e.ClientId == id);
-        }
+        //private bool ClientExists(int id)
+        //{
+        //    return _context.Clients.Any(e => e.ClientId == id);
+        //}
     }
 }

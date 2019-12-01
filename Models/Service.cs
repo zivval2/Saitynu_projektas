@@ -21,6 +21,7 @@ namespace Saitynu_projektas.Models
         [Column(TypeName = "varchar(12)")]
         public string Price { get; set; }
         [Required]
-        public Artist Artist { get; set; }
+        [ForeignKey("UserId")]
+         public int ArtistId { get; set; }
     }
 }

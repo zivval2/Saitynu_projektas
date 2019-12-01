@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -53,14 +54,31 @@ namespace Saitynu_projektas.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] User user)
         {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+            var idClaim = claim
+                .Where(x => x.Type == ClaimTypes.NameIdentifier)
+                .FirstOrDefault();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+            var artist = await _context.Users.FindAsync(user.UserId);
+            if (idClaim.Value != user.UserId.ToString())
+            {
+                return Unauthorized();
             }
 
             if (id != user.UserId)
             {
                 return BadRequest();
+            }
+
+            var existingUser = _context.Users.Where(x => x.Username == user.Username).FirstOrDefault();
+            if (existingUser != null)
+            {
+                return BadRequest("User with this username already exists");
             }
 
             _context.Entry(user).State = EntityState.Modified;
@@ -83,7 +101,7 @@ namespace Saitynu_projektas.Controllers
 
             return NoContent();
         }
-
+        [AllowAnonymous]
         // POST: api/Users
         [HttpPost]
         public async Task<IActionResult> PostUser([FromBody] User user)
@@ -92,7 +110,11 @@ namespace Saitynu_projektas.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            var existingUser = _context.Users.Where(x => x.Username == user.Username).FirstOrDefault();
+            if(existingUser != null)
+            {
+                return BadRequest("User with this username already exists");
+            }
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -103,6 +125,12 @@ namespace Saitynu_projektas.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+            var idClaim = claim
+                .Where(x => x.Type == ClaimTypes.NameIdentifier)
+                .FirstOrDefault();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -114,6 +142,10 @@ namespace Saitynu_projektas.Controllers
                 return NotFound();
             }
 
+            if(user.UserId.ToString() != idClaim.Value)
+            {
+                return Unauthorized();
+            }
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 

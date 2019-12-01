@@ -8,13 +8,14 @@ namespace Saitynu_projektas.Models
 {
     public class ClientContext :DbContext
     {
+       // internal object 
         public ClientContext(DbContextOptions<ClientContext> options) : base(options)
         {
 
         }
-        public DbSet<Client> Clients { get; set; }
+       // public DbSet<Client> Clients { get; set; }
 
-        public DbSet<Artist> Artists { get; set; }
+        //public DbSet<Artist> Artists { get; set; }
 
         public DbSet<Registration> Registrations { get; set; }
 

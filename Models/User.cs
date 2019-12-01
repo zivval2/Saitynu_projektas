@@ -20,6 +20,17 @@ namespace Saitynu_projektas.Models
        // [Required]
         [Column(TypeName = "nvarchar(100)")]
         public string Role { get; set; }
+        [Column(TypeName = "nvarchar(100)")]
+        public string Name { get; set; }
+        //[Required]
+        [Column(TypeName = "nvarchar(100)")]
+        public string Surname { get; set; }
+        //[Required]
+        [Column(TypeName = "varchar(9)")]
+        public string PhoneNr { get; set; }
+        //[Required]
+        [Column(TypeName = "nvarchar(100)")]
+        public string Email { get; set; }
 
     }
 }
