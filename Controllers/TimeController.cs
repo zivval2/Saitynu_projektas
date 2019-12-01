@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -53,9 +54,21 @@ namespace Saitynu_projektas.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTime([FromRoute] int id, [FromBody] Time time)
         {
+
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+            var idClaim = claim
+                .Where(x => x.Type == ClaimTypes.NameIdentifier)
+                .FirstOrDefault();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+            var artist = await _context.Users.FindAsync(time.ArtistId);
+            if (artist == null || artist.Role != Role.Artist || idClaim.Value != time.ArtistId.ToString())
+            {
+                return Unauthorized();
             }
 
             if (id != time.TimeId)
@@ -89,11 +102,22 @@ namespace Saitynu_projektas.Controllers
         [HttpPost]
         public async Task<IActionResult> PostTime([FromBody] Time time)
         {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+            var idClaim = claim
+                .Where(x => x.Type == ClaimTypes.NameIdentifier)
+                .FirstOrDefault();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
+            var artist = await _context.Users.FindAsync(time.ArtistId);
+            if (artist == null || artist.Role != Role.Artist || idClaim.Value != time.ArtistId.ToString())
+            {
+                return Unauthorized();
+            }
+            time.IsUsed = false;
             _context.Times.Add(time);
             await _context.SaveChangesAsync();
 
@@ -105,6 +129,12 @@ namespace Saitynu_projektas.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTime([FromRoute] int id)
         {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+            var idClaim = claim
+                .Where(x => x.Type == ClaimTypes.NameIdentifier)
+                .FirstOrDefault();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -114,6 +144,10 @@ namespace Saitynu_projektas.Controllers
             if (time == null)
             {
                 return NotFound();
+            }
+            if(time.ArtistId.ToString() != idClaim.Value)
+            {
+                return Unauthorized();
             }
 
             _context.Times.Remove(time);

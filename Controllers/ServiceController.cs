@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -39,7 +40,11 @@ namespace Saitynu_projektas.Controllers
                 return BadRequest(ModelState);
             }
 
-            var service = await _context.Services.FindAsync(id);
+            var service = await _context.Services
+                        .Include(i => i.ArtistId)
+                        .FirstOrDefaultAsync(i => i.ServiceId == id);
+
+            //var service = await _context.Services.FindAsync(id);
 
             if (service == null)
             {
@@ -54,9 +59,20 @@ namespace Saitynu_projektas.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutService([FromRoute] int id, [FromBody] Service service)
         {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+            var idClaim = claim
+                .Where(x => x.Type == ClaimTypes.NameIdentifier)
+                .FirstOrDefault();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+            var artist = await _context.Users.FindAsync(service.ArtistId);
+            if (artist == null || artist.Role != Role.Artist || idClaim.Value != service.ArtistId.ToString())
+            {
+                return Unauthorized();
             }
 
             if (id != service.ServiceId)
@@ -90,10 +106,30 @@ namespace Saitynu_projektas.Controllers
         [HttpPost]
         public async Task<IActionResult> PostService([FromBody] Service service)
         {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+            var idClaim = claim
+                .Where(x => x.Type == ClaimTypes.NameIdentifier)
+                .FirstOrDefault();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            var artist = await _context.Users.FindAsync(service.ArtistId);
+            if (artist == null || artist.Role != Role.Artist || idClaim.Value != service.ArtistId.ToString())
+            {
+                return Unauthorized();
+                //return BadRequest("pirma salyga" + service.ArtistId);
+            }
+            //if(artist.Role != Role.Artist)
+            //{
+            //    return BadRequest("antra salyga");
+            //}
+            //if(idClaim.Value != service.ArtistId.ToString())
+            //{
+            //    return BadRequest("trecia salyga");
+            //}
 
             _context.Services.Add(service);
             await _context.SaveChangesAsync();
@@ -105,6 +141,12 @@ namespace Saitynu_projektas.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteService([FromRoute] int id)
         {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+            var idClaim = claim
+                .Where(x => x.Type == ClaimTypes.NameIdentifier)
+                .FirstOrDefault();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -114,6 +156,11 @@ namespace Saitynu_projektas.Controllers
             if (service == null)
             {
                 return NotFound();
+            }
+
+            if (service.ArtistId.ToString() != idClaim.Value)
+            {
+                return Unauthorized();
             }
 
             _context.Services.Remove(service);

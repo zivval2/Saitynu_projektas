@@ -13,11 +13,22 @@ namespace Saitynu_projektas.Models
         public int RegistrationId { get; set; }
         [Required]
         public DateTime RegistrationDate { get; set; }
+        //[Required]
+        //public Client Client { get; set; }
         [Required]
-        public Client Client { get; set; }
+        [ForeignKey("UserId")]
+        public int ClientId { get; set; }
+        //[Required]
+        //public User Client { get; set; }
         [Required]
-        public Time Time { get; set; }
+        [ForeignKey("TimeId")]
+        public int TimeId { get; set; }
+        //[Required]
+        //public Time Time { get; set; }
         [Required]
-        public Service Service { get; set; }
+        [ForeignKey("ServiceId")]
+        public int ServiceId { get; set; }
+        //[Required]
+        //public Service Service { get; set; }
     }
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Saitynu_projektas.Models;
 
 namespace Saitynu_projektas.Migrations
 {
     [DbContext(typeof(ClientContext))]
-    partial class ClientContextModelSnapshot : ModelSnapshot
+    [Migration("20191124182811_123")]
+    partial class _123
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +27,7 @@ namespace Saitynu_projektas.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ClientId");
+                    b.Property<int>("ClientUserId");
 
                     b.Property<DateTime>("RegistrationDate");
 
@@ -35,6 +37,12 @@ namespace Saitynu_projektas.Migrations
 
                     b.HasKey("RegistrationId");
 
+                    b.HasIndex("ClientUserId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.HasIndex("TimeId");
+
                     b.ToTable("Registrations");
                 });
 
@@ -43,8 +51,6 @@ namespace Saitynu_projektas.Migrations
                     b.Property<int>("ServiceId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ArtistId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -58,6 +64,8 @@ namespace Saitynu_projektas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("UserId");
+
                     b.HasKey("ServiceId");
 
                     b.ToTable("Services");
@@ -69,15 +77,15 @@ namespace Saitynu_projektas.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ArtistId");
+                    b.Property<int>("ArtistUserId");
 
                     b.Property<DateTime>("Date");
-
-                    b.Property<bool>("IsUsed");
 
                     b.Property<bool>("IsWorking");
 
                     b.HasKey("TimeId");
+
+                    b.HasIndex("ArtistUserId");
 
                     b.ToTable("Times");
                 });
@@ -114,6 +122,32 @@ namespace Saitynu_projektas.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Saitynu_projektas.Models.Registration", b =>
+                {
+                    b.HasOne("Saitynu_projektas.Models.User", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Saitynu_projektas.Models.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Saitynu_projektas.Models.Time", "Time")
+                        .WithMany()
+                        .HasForeignKey("TimeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Saitynu_projektas.Models.Time", b =>
+                {
+                    b.HasOne("Saitynu_projektas.Models.User", "Artist")
+                        .WithMany()
+                        .HasForeignKey("ArtistUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

@@ -22,34 +22,14 @@ namespace Saitynu_projektas.Controllers
             _context = context;
         }
 
-        // GET: api/Artist
+        [Authorize]
         [HttpGet]
-        public IEnumerable<Artist> GetArtists()
+        public IEnumerable<User> GetArtists()
         {
-            return _context.Artists;
-        }
-
-        // GET: api/Artist/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetArtist([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var artist = await _context.Artists.FindAsync(id);
-
-            if (artist == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(artist);
+            return _context.Users.Where(l => l.Role == Role.Artist);
         }
 
         [HttpGet("{id}/services")]
-        // [AllowAnonymous]
         public async Task<IActionResult> GetArtistServices([FromRoute] int id)
         {
 
@@ -57,113 +37,111 @@ namespace Saitynu_projektas.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
-            var artist = await _context.Artists.FindAsync(id);
 
-            if (artist == null)
+            var artist = await _context.Users.FindAsync(id);
+
+            if (artist == null || artist.Role!=Role.Artist)
             {
                 return NotFound();
             }
-            var services =  _context.Services.Where(l => l.Artist.ArtistId == id);
+            var services = _context.Services.Where(l => l.ArtistId == id);
 
             return Ok(services);
         }
 
         [HttpGet("{id}/times")]
-        // [AllowAnonymous]
         public async Task<IActionResult> GetArtistTimes([FromRoute] int id)
         {
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var artist = await _context.Artists.FindAsync(id);
+            var artist = await _context.Users.FindAsync(id);
 
-            if (artist == null)
+            if (artist == null || artist.Role != Role.Artist)
             {
                 return NotFound();
             }
-            var times = _context.Times.Where(l => l.Artist.ArtistId == id);
+            var times = _context.Times.Where(l => l.ArtistId == id);
 
             return Ok(times);
         }
 
-        // PUT: api/Artist/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutArtist([FromRoute] int id, [FromBody] Artist artist)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// PUT: api/Artist/5
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutArtist([FromRoute] int id, [FromBody] Artist artist)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            if (id != artist.ArtistId)
-            {
-                return BadRequest();
-            }
+        //    if (id != artist.ArtistId)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(artist).State = EntityState.Modified;
+        //    _context.Entry(artist).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ArtistExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!ArtistExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        // POST: api/Artist
-        [HttpPost]
-        public async Task<IActionResult> PostArtist([FromBody] Artist artist)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// POST: api/Artist
+        //[HttpPost]
+        //public async Task<IActionResult> PostArtist([FromBody] Artist artist)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            _context.Artists.Add(artist);
-            await _context.SaveChangesAsync();
+        //    _context.Artists.Add(artist);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetArtist", new { id = artist.ArtistId }, artist);
-        }
+        //    return CreatedAtAction("GetArtist", new { id = artist.ArtistId }, artist);
+        //}
 
-        // DELETE: api/Artist/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteArtist([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// DELETE: api/Artist/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteArtist([FromRoute] int id)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            var artist = await _context.Artists.FindAsync(id);
-            if (artist == null)
-            {
-                return NotFound();
-            }
+        //    var artist = await _context.Artists.FindAsync(id);
+        //    if (artist == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Artists.Remove(artist);
-            await _context.SaveChangesAsync();
+        //    _context.Artists.Remove(artist);
+        //    await _context.SaveChangesAsync();
 
-            return Ok(artist);
-        }
+        //    return Ok(artist);
+        //}
 
-        private bool ArtistExists(int id)
-        {
-            return _context.Artists.Any(e => e.ArtistId == id);
-        }
+        //private bool ArtistExists(int id)
+        //{
+        //    return _context.Artists.Any(e => e.ArtistId == id);
+        //}
     }
 }

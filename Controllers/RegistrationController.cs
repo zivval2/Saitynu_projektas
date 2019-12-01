@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -23,53 +24,54 @@ namespace Saitynu_projektas.Controllers
         }
 
         // GET: api/Registration
+        [Authorize(Roles = Role.Admin)]
         [HttpGet]
         public IEnumerable<Registration> GetRegistrations()
         {
             return _context.Registrations;
         }
 
-        [HttpGet("{id}/serviceId/{serviceId}")]
-        // [AllowAnonymous]
-        public async Task<IActionResult> GetRegistration([FromRoute] int id, [FromRoute] int serviceId)
-        {
+        //[HttpGet("{id}/serviceId/{serviceId}")]
+        //// [AllowAnonymous]
+        //public async Task<IActionResult> GetRegistration([FromRoute] int id, [FromRoute] int serviceId)
+        //{
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-
-
-            //var registration = "value";//_context.Registrations.Include(d=>d.Service);
-                                       //foreach(Registration d in registration)
-                                       //{
-                                       //    foreach(Service s in d.Service)
-                                       //    {
-                                       //        kazkasList.add.(d);
-                                       //    }
-                                       //}
-                                       //if (registration == null)
-                                       //{
-                                       //    return NotFound();
-                                       //}
-
-            var services = await _context.Services.FindAsync(serviceId);
-            var registration = await _context.Registrations.FindAsync(id);
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
 
-            if (registration == null)
-            {
-                return NotFound();
-            }
 
-            if (services == null)
-            {
-                return NotFound();
-            }
+        //    //var registration = "value";//_context.Registrations.Include(d=>d.Service);
+        //                               //foreach(Registration d in registration)
+        //                               //{
+        //                               //    foreach(Service s in d.Service)
+        //                               //    {
+        //                               //        kazkasList.add.(d);
+        //                               //    }
+        //                               //}
+        //                               //if (registration == null)
+        //                               //{
+        //                               //    return NotFound();
+        //                               //}
 
-            return Ok(services);// registration);
-        }
+        //    var services = await _context.Services.FindAsync(serviceId);
+        //    var registration = await _context.Registrations.FindAsync(id);
+
+
+        //    if (registration == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    if (services == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(services);// registration);
+        //}
 
         // GET: api/Registration/5
         [HttpGet("{id}")]
@@ -80,7 +82,18 @@ namespace Saitynu_projektas.Controllers
                 return BadRequest(ModelState);
             }
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+            var idClaim = claim
+                .Where(x => x.Type == ClaimTypes.NameIdentifier)
+                .FirstOrDefault();
+
             var registration = await _context.Registrations.FindAsync(id);
+            var service = await _context.Services.FindAsync(registration.ServiceId);
+            if (registration.ClientId.ToString() != idClaim.Value || service.ArtistId.ToString() != idClaim.Value)
+            {
+                return Unauthorized();
+            }
 
             if (registration == null)
             {
@@ -91,12 +104,24 @@ namespace Saitynu_projektas.Controllers
         }
 
         // PUT: api/Registration/5
+        [Authorize(Roles = Role.Client)]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRegistration([FromRoute] int id, [FromBody] Registration registration)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+            var idClaim = claim
+                .Where(x => x.Type == ClaimTypes.NameIdentifier)
+                .FirstOrDefault();
+
+            if (registration.ClientId.ToString() != idClaim.Value)
+            {
+                return Unauthorized();
             }
 
             if (id != registration.RegistrationId)
@@ -126,6 +151,7 @@ namespace Saitynu_projektas.Controllers
         }
 
         // POST: api/Registration
+        [Authorize(Roles = Role.Client)]
         [HttpPost]
         public async Task<IActionResult> PostRegistration([FromBody] Registration registration)
         {
@@ -134,6 +160,24 @@ namespace Saitynu_projektas.Controllers
                 return BadRequest(ModelState);
             }
 
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IEnumerable<Claim> claim = identity.Claims;
+            var idClaim = claim
+                .Where(x => x.Type == ClaimTypes.NameIdentifier)
+                .FirstOrDefault();
+
+            if (registration.ClientId.ToString() != idClaim.Value)
+            {
+                return Unauthorized();
+            }
+            var time = await _context.Times.FindAsync(registration.TimeId);
+            if(time.IsUsed || !time.IsWorking)
+            {
+                return BadRequest();
+            }
+
+            registration.RegistrationDate = DateTime.Now;
+            time.IsUsed = true;
             _context.Registrations.Add(registration);
             await _context.SaveChangesAsync();
 
@@ -141,6 +185,7 @@ namespace Saitynu_projektas.Controllers
         }
 
         // DELETE: api/Registration/5
+        [Authorize(Roles = Role.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRegistration([FromRoute] int id)
         {
